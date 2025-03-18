@@ -5,15 +5,15 @@ using namespace std;
 
 class Node {
 public:
-    int age;
-    double height;
-    string name;
+    int cost; 
+    double quantity; 
+    string title;
     Node* next;
 
     Node(int i, double d, string s) {
-        age = i;
-        height = d;
-        name = s;
+        cost = i; 
+        quantity = d; 
+        title = s; 
         next = nullptr;
     }
 };
@@ -30,8 +30,8 @@ public:
     void print() {
         Node* temp = head;
         while (temp != nullptr) {
-            cout << "quantity: " << temp->age << ", cost: " << temp->height 
-                 << ", title: " << temp->name << endl;
+            cout << "Cost: " << temp->cost << ", Quantity: " << temp->quantity 
+                 << ", Title: " << temp->title << endl; 
             temp = temp->next;
         }
         cout << endl;
@@ -73,38 +73,41 @@ public:
             cout << "Index out of bounds." << endl;
         }
     }
- void addBefore(string ind, int i, double d, string s) {
-     if (head == nullptr) return;
 
-     if (head->name == ind) { //если элемент стоит первым, добавляем в начало
-         addToBeginning(i, d, s);
-         return;
-     }
+    void addBefore(string ind, int i, double d, string s) {
+        if (head == nullptr) return;
 
-     Node* temp = head;
-     while (temp->next != nullptr && temp->next->name != ind) {
-         temp = temp->next;
-     }
+        if (head->title == ind) { 
+            addToBeginning(i, d, s);
+            return;
+        }
 
-      if (temp != nullptr) {
+        Node* temp = head;
+        while (temp->next != nullptr && temp->next->title != ind) { 
+            temp = temp->next;
+        }
+
+        if (temp->next != nullptr) {
             Node* newNode = new Node(i, d, s);
             newNode->next = temp->next;
             temp->next = newNode;
         } else {
-            cout << "person with name"  << ind << "' was not found" << endl;
+            cout << "Person with title '" << ind << "' was not found." << endl; 
         }
     }
-    void removebyage(int i) {
+
+    void removebycost(int i) { 
         if (head == nullptr) return;
 
-        if (head->age == i) {
+        if (head->cost == i) { 
             Node* temp = head;
             head = head->next;
             delete temp;
+            return; 
         }
 
         Node* temp = head;
-        while (temp->next != nullptr && temp->next->age != i) {
+        while (temp->next != nullptr && temp->next->cost != i) { 
             temp = temp->next;
         }
 
@@ -112,6 +115,8 @@ public:
             Node* toDelete = temp->next;
             temp->next = temp->next->next;
             delete toDelete;
+        } else {
+            cout << "No person with cost " << i << " found." << endl; 
         }
     }
 
@@ -128,15 +133,15 @@ public:
 int main() {
     LinkedList list;
     list.addToEnd(3, 90, "Tango");
-   list.addBefore("Tango", 5, 1900, "MaskOfMadness");
+    list.addBefore("Tango", 5, 1900, "MaskOfMadness");
     list.addToBeginning(69, 4950, "Butterfly");
-    list.addAfterIndex(2, 33, 5650, "AbyssalBlade");
+    list.addAfterIndex(1, 33, 5650, "AbyssalBlade"); 
 
     cout << "Linked List after additions: " << endl;
     list.print();
 
-    list.removebyage(69);
-    cout << "Linked List after deleting person with age value 21: " << endl;
+    list.removebycost(69);
+      cout << "Linked List after deleting person with cost value 69: " << endl;
     list.print();
 
     return 0;
