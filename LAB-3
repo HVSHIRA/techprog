@@ -94,7 +94,7 @@ public:
      void rotate(double angle) override {
         double radians = angle * PI / 180.0;
 
-        // Coordinates of original points
+
         double x1 = topLeft.getX();
         double y1 = topLeft.getY();
         double x2 = x1 + width;
@@ -105,12 +105,12 @@ public:
         double y4 = y1 + height;
 
 
-        // Центр вращения - центр прямоугольника
+  
         double centerX = x1 + width / 2.0;
         double centerY = y1 + height / 2.0;
 
 
-        //rotate points
+
         double newX1 = centerX + (x1 - centerX) * cos(radians) - (y1 - centerY) * sin(radians);
         double newY1 = centerY + (x1 - centerX) * sin(radians) + (y1 - centerY) * cos(radians);
 
@@ -123,14 +123,14 @@ public:
         double newX4 = centerX + (x4 - centerX) * cos(radians) - (y4 - centerY) * sin(radians);
         double newY4 = centerY + (x4 - centerX) * sin(radians) + (y4 - centerY) * cos(radians);
         
-        // Вывод координат каждой точки
+  
         std::cout << "Координаты после поворота:" << std::endl;
         std::cout << "Верхняя левая: (" << newX1 << ", " << newY1 << ")" << std::endl;
         std::cout << "Верхняя правая: (" << newX2 << ", " << newY2 << ")" << std::endl;
         std::cout << "Нижняя правая: (" << newX3 << ", " << newY3 << ")" << std::endl;
         std::cout << "Нижняя левая: (" << newX4 << ", " << newY4 << ")" << std::endl;
 
-        // set topLeft
+
         topLeft.setX(newX1);
         topLeft.setY(newY1);
     }
@@ -153,7 +153,7 @@ public:
     void rotate(double angle) override {
         double radians = angle * PI / 180.0;
 
-        // Coordinates of original points
+     
         double x1 = topLeft.getX();
         double y1 = topLeft.getY();
         double x2 = x1 + width;
@@ -164,12 +164,12 @@ public:
         double y4 = y1 + height;
 
 
-        // Центр вращения - центр квадрата
+    
         double centerX = x1 + width / 2.0;
         double centerY = y1 + height / 2.0;
 
 
-        //rotate points
+    
         double newX1 = centerX + (x1 - centerX) * cos(radians) - (y1 - centerY) * sin(radians);
         double newY1 = centerY + (x1 - centerX) * sin(radians) + (y1 - centerY) * cos(radians);
 
@@ -219,7 +219,7 @@ public:
   void rotate(double angle) override {
         double radians = angle * PI / 180.0;
 
-        // Coordinates of original points
+     
         double x1 = topLeft.getX();
         double y1 = topLeft.getY();
         double x2 = x1 + base;
@@ -230,12 +230,12 @@ public:
         double y4 = y2 + height;
 
 
-        // Центр вращения - центр параллелограмма
+  
         double centerX = x1 + base / 2.0;
         double centerY = y1 + height / 2.0;
 
 
-        //rotate points
+
         double newX1 = centerX + (x1 - centerX) * cos(radians) - (y1 - centerY) * sin(radians);
         double newY1 = centerY + (x1 - centerX) * sin(radians) + (y1 - centerY) * cos(radians);
 
@@ -248,7 +248,7 @@ public:
         double newX4 = centerX + (x4 - centerX) * cos(radians) - (y4 - centerY) * sin(radians);
         double newY4 = centerY + (x4 - centerX) * sin(radians) + (y4 - centerY) * cos(radians);
 
-        // Вывод координат каждой точки
+  
         std::cout << "Координаты после поворота:" << std::endl;
         std::cout << "Верхняя левая: (" << newX1 << ", " << newY1 << ")" << std::endl;
         std::cout << "Верхняя правая: (" << newX2 << ", " << newY2 << ")" << std::endl;
@@ -276,7 +276,7 @@ public:
      void rotate(double angle) override {
         double radians = angle * PI / 180.0;
 
-        // Coordinates of original points
+   
         double x1 = topLeft.getX();
         double y1 = topLeft.getY();
         double x2 = x1 + base;
@@ -287,12 +287,12 @@ public:
         double y4 = y2 + height;
 
 
-        // Центр вращения - центр параллелограмма
+     
         double centerX = x1 + base / 2.0;
         double centerY = y1 + height / 2.0;
 
 
-        //rotate points
+   
         double newX1 = centerX + (x1 - centerX) * cos(radians) - (y1 - centerY) * sin(radians);
         double newY1 = centerY + (x1 - centerX) * sin(radians) + (y1 - centerY) * cos(radians);
 
@@ -305,7 +305,7 @@ public:
         double newX4 = centerX + (x4 - centerX) * cos(radians) - (y4 - centerY) * sin(radians);
         double newY4 = centerY + (x4 - centerX) * sin(radians) + (y4 - centerY) * cos(radians);
 
-        // Вывод координат каждой точки
+
         std::cout << "Координаты после поворота:" << std::endl;
         std::cout << "Верхняя левая: (" << newX1 << ", " << newY1 << ")" << std::endl;
         std::cout << "Верхняя правая: (" << newX2 << ", " << newY2 << ")" << std::endl;
