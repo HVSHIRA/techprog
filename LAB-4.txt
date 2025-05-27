@@ -1,0 +1,186 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+// 1. Класс с описанием объекта (студент)
+class Student {
+public:
+    string name;
+    string surname;
+    int age;
+    string group;
+    double average_score;
+};
+
+// Функции для работы с базой данных
+vector<Student> students;
+
+// Ввести объект в систему
+void addStudent() {
+    Student s;
+    cout << "Введите имя: ";
+    cin >> s.name;
+    cout << "Введите фамилию: ";
+    cin >> s.surname;
+    cout << "Введите возраст: ";
+    cin >> s.age;
+    cout << "Введите группу: ";
+    cin >> s.group;
+    cout << "Введите средний балл: ";
+    cin >> s.average_score;
+    
+    students.push_back(s);
+    cout << "Студент добавлен!\n";
+}
+
+// Сохранить в файл
+void saveToFile(const string& filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Ошибка открытия файла для записи!\n";
+        return;
+    }
+    
+    for (const auto& s : students) {
+        file << s.name << " " << s.surname << " " << s.age << " " 
+             << s.group << " " << s.average_score << "\n";
+    }
+    
+    file.close();
+    cout << "Данные сохранены в файл " << filename << "\n";
+}
+
+// Считать из файла
+void loadFromFile(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Ошибка открытия файла для чтения!\n";
+        return;
+    }
+    
+    students.clear();
+    Student s;
+    while (file >> s.name >> s.surname >> s.age >> s.group >> s.average_score) {
+        students.push_back(s);
+    }
+    
+    file.close();
+    cout << "Данные загружены из файла " << filename << "\n";
+}
+
+// Обновить объект
+void updateStudent(int index) {
+    if (index < 0 || index >= students.size()) {
+        cout << "Неверный индекс студента!\n";
+        return;
+    }
+    
+    Student& s = students[index];
+    cout << "Текущие данные студента:\n";
+    cout << "Имя: " << s.name << "\n";
+    cout << "Фамилия: " << s.surname << "\n";
+    cout << "Возраст: " << s.age << "\n";
+    cout << "Группа: " << s.group << "\n";
+    cout << "Средний балл: " << s.average_score << "\n";
+    
+    cout << "Введите новые данные:\n";
+    cout << "Имя: ";
+    cin >> s.name;
+    cout << "Фамилия: ";
+    cin >> s.surname;
+    cout << "Возраст: ";
+    cin >> s.age;
+    cout << "Группа: ";
+    cin >> s.group;
+    cout << "Средний балл: ";
+    cin >> s.average_score;
+    
+    cout << "Данные студента обновлены!\n";
+}
+
+// Удалить объект
+void deleteStudent(int index) {
+    if (index < 0 || index >= students.size()) {
+        cout << "Неверный индекс студента!\n";
+        return;
+    }
+    
+    students.erase(students.begin() + index);
+    cout << "Студент удален!\n";
+}
+
+// Вывести список студентов
+void printStudents() {
+    if (students.empty()) {
+        cout << "Список студентов пуст.\n";
+        return;
+    }
+    
+    cout << "Список студентов:\n";
+    for (size_t i = 0; i < students.size(); ++i) {
+        cout << i << ": " << students[i].surname << " " << students[i].name 
+             << ", " << students[i].age << " лет, группа " << students[i].group 
+             << ", средний балл " << students[i].average_score << "\n";
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    
+    string filename = "students.txt";
+    int choice;
+    
+    while (true) {
+        cout << "\nМеню:\n";
+        cout << "1. Добавить студента\n";
+        cout << "2. Сохранить в файл\n";
+        cout << "3. Загрузить из файла\n";
+        cout << "4. Обновить студента\n";
+        cout << "5. Удалить студента\n";
+        cout << "6. Показать всех студентов\n";
+        cout << "0. Выход\n";
+        cout << "Выберите действие: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                saveToFile(filename);
+                break;
+            case 3:
+                loadFromFile(filename);
+                break;
+            case 4: {
+                int index;
+                printStudents();
+                cout << "Введите индекс студента для обновления: ";
+                cin >> index;
+                updateStudent(index);
+                break;
+            }
+            case 5: {
+                int index;
+                printStudents();
+                cout << "Введите индекс студента для удаления: ";
+                cin >> index;
+                deleteStudent(index);
+                break;
+            }
+            case 6:
+                printStudents();
+                break;
+            case 0:
+                return 0;
+            default:
+                cout << "Неверный выбор!\n";
+        }
+    }
+    
+    return 0;
+}
