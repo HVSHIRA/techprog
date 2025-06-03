@@ -2,185 +2,190 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <algorithm>
+#include <sstream>
+#include <sys/stat.h>
+#include <locale>
+#include <codecvt>
 
 using namespace std;
 
-// 1. Класс с описанием объекта (студент)
-class Student {
+
+class Hero {
 public:
-    string name;
-    string surname;
-    int age;
-    string group;
-    double average_score;
+    string name;       
+    string role;      
+    int starting_gold; 
+    string main_attribute; 
+    string difficulty;  
 };
 
-// Функции для работы с базой данных
-vector<Student> students;
-
-// Ввести объект в систему
-void addStudent() {
-    Student s;
-    cout << "Введите имя: ";
-    cin >> s.name;
-    cout << "Введите фамилию: ";
-    cin >> s.surname;
-    cout << "Введите возраст: ";
-    cin >> s.age;
-    cout << "Введите группу: ";
-    cin >> s.group;
-    cout << "Введите средний балл: ";
-    cin >> s.average_score;
-    
-    students.push_back(s);
-    cout << "Студент добавлен!\n";
+// Функция для ввода нового героя
+Hero inputHero() {
+    Hero h;
+    cout << "Введите имя героя: ";
+    cin >> h.name;
+    cout << "Введите роль героя: ";
+    cin >> h.role;
+    cout << "Введите начальное золото: ";
+    cin >> h.starting_gold;
+    cout << "Введите главный атрибут: ";
+    cin >> h.main_attribute;
+    cout << "Введите сложность освоения: ";
+    cin >> h.difficulty;
+    return h;
 }
 
-// Сохранить в файл
-void saveToFile(const string& filename) {
-    ofstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Ошибка открытия файла для записи!\n";
-        return;
-    }
-    
-    for (const auto& s : students) {
-        file << s.name << " " << s.surname << " " << s.age << " " 
-             << s.group << " " << s.average_score << "\n";
-    }
-    
-    file.close();
-    cout << "Данные сохранены в файл " << filename << "\n";
+// Функция для проверки существования файла
+bool fileExists(const string& filename) {
+    struct stat buffer;
+    return (stat(filename.c_str(), &buffer) == 0);
 }
 
-// Считать из файла
-void loadFromFile(const string& filename) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Ошибка открытия файла для чтения!\n";
+// Функция для сохранения массива героев в файл
+void saveToFile(const vector<Hero>& heroes, const string& filename) {
+    
+    ofstream outFile(filename);
+    if (!outFile) {
+        cerr << "Ошибка открытия файла для записи! Возможные причины:" << endl;
+        cerr << "1. Неправильный путь к файлу." << endl;
+        cerr << "2. Нет прав на запись в указанную директорию." << endl;
+        cerr << "3. Файл уже открыт в другой программе." << endl;
         return;
     }
-    
-    students.clear();
-    Student s;
-    while (file >> s.name >> s.surname >> s.age >> s.group >> s.average_score) {
-        students.push_back(s);
+
+   
+    outFile.imbue(locale(outFile.getloc(), new codecvt_utf8<wchar_t>));
+
+    for (const auto& h : heroes) {
+        outFile << h.name << " " << h.role << " " << h.starting_gold << " "
+                << h.main_attribute << " " << h.difficulty << endl;
     }
-    
-    file.close();
-    cout << "Данные загружены из файла " << filename << "\n";
+
+    outFile.close();
+    cout << "Данные успешно сохранены в файл." << endl;
 }
 
-// Обновить объект
-void updateStudent(int index) {
-    if (index < 0 || index >= students.size()) {
-        cout << "Неверный индекс студента!\n";
-        return;
+// Функция для чтения героев из файла
+vector<Hero> readFromFile(const string& filename) {
+    vector<Hero> heroes;
+    if (!fileExists(filename)) {
+        cerr << "Файл не существует. Будет создан новый файл при сохранении." << endl;
+        return heroes;
     }
-    
-    Student& s = students[index];
-    cout << "Текущие данные студента:\n";
-    cout << "Имя: " << s.name << "\n";
-    cout << "Фамилия: " << s.surname << "\n";
-    cout << "Возраст: " << s.age << "\n";
-    cout << "Группа: " << s.group << "\n";
-    cout << "Средний балл: " << s.average_score << "\n";
-    
-    cout << "Введите новые данные:\n";
-    cout << "Имя: ";
-    cin >> s.name;
-    cout << "Фамилия: ";
-    cin >> s.surname;
-    cout << "Возраст: ";
-    cin >> s.age;
-    cout << "Группа: ";
-    cin >> s.group;
-    cout << "Средний балл: ";
-    cin >> s.average_score;
-    
-    cout << "Данные студента обновлены!\n";
+
+    ifstream inFile(filename);
+    if (!inFile) {
+        cerr << "Ошибка открытия файла для чтения!" << endl;
+        return heroes;
+    }
+
+  
+    inFile.imbue(locale(inFile.getloc(), new codecvt_utf8<wchar_t>));
+
+    string line;
+    while (getline(inFile, line)) {
+        istringstream iss(line);
+        Hero h;
+        if (iss >> h.name >> h.role >> h.starting_gold >> h.main_attribute >> h.difficulty) {
+            heroes.push_back(h);
+        }
+    }
+
+    inFile.close();
+    return heroes;
 }
 
-// Удалить объект
-void deleteStudent(int index) {
-    if (index < 0 || index >= students.size()) {
-        cout << "Неверный индекс студента!\n";
+
+void updateHero(vector<Hero>& heroes, int index) {
+    if (index < 0 || index >= heroes.size()) {
+        cout << "Неверный индекс!" << endl;
         return;
     }
-    
-    students.erase(students.begin() + index);
-    cout << "Студент удален!\n";
+
+    cout << "Редактирование героя #" << index << endl;
+    Hero h = inputHero();
+    heroes[index] = h;
+    cout << "Герой успешно обновлен." << endl;
 }
 
-// Вывести список студентов
-void printStudents() {
-    if (students.empty()) {
-        cout << "Список студентов пуст.\n";
+// Функция для удаления героя
+void deleteHero(vector<Hero>& heroes, int index) {
+    if (index < 0 || index >= heroes.size()) {
+        cout << "Неверный индекс!" << endl;
         return;
     }
-    
-    cout << "Список студентов:\n";
-    for (size_t i = 0; i < students.size(); ++i) {
-        cout << i << ": " << students[i].surname << " " << students[i].name 
-             << ", " << students[i].age << " лет, группа " << students[i].group 
-             << ", средний балл " << students[i].average_score << "\n";
+
+    heroes.erase(heroes.begin() + index);
+    cout << "Герой успешно удален." << endl;
+}
+
+// Функция для вывода всех героев
+void printHeroes(const vector<Hero>& heroes) {
+    cout << "\nСписок героев:" << endl;
+    cout << "----------------------------------------" << endl;
+    for (size_t i = 0; i < heroes.size(); ++i) {
+        const auto& h = heroes[i];
+        cout << "#" << i << ": " << h.name << ", роль: " << h.role
+             << ", начальное золото: " << h.starting_gold << ", атрибут: " << h.main_attribute
+             << ", сложность: " << h.difficulty << endl;
     }
+    cout << "----------------------------------------\n" << endl;
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
-    
-    string filename = "students.txt";
-    int choice;
-    
+    vector<Hero> heroes;
+    string filename = "C:\\Users\\gxth\\OneDrive\\Desktop\\heroes.txt"; // Укажите ваше имя пользователя
+
+    // Загрузка данных из файла при старте
+    heroes = readFromFile(filename);
+
     while (true) {
-        cout << "\nМеню:\n";
-        cout << "1. Добавить студента\n";
-        cout << "2. Сохранить в файл\n";
-        cout << "3. Загрузить из файла\n";
-        cout << "4. Обновить студента\n";
-        cout << "5. Удалить студента\n";
-        cout << "6. Показать всех студентов\n";
-        cout << "0. Выход\n";
+        cout << "Меню:" << endl;
+        cout << "1. Добавить героя" << endl;
+        cout << "2. Просмотреть всех героев" << endl;
+        cout << "3. Обновить героя" << endl;
+        cout << "4. Удалить героя" << endl;
+        cout << "5. Сохранить в файл" << endl;
+        cout << "6. Выйти" << endl;
+
+        int choice;
         cout << "Выберите действие: ";
         cin >> choice;
-        
+
         switch (choice) {
-            case 1:
-                addStudent();
+            case 1: {
+                Hero h = inputHero();
+                heroes.push_back(h);
+                cout << "Герой добавлен." << endl;
                 break;
+            }
             case 2:
-                saveToFile(filename);
+                printHeroes(heroes);
                 break;
-            case 3:
-                loadFromFile(filename);
+            case 3: {
+                int index;
+                cout << "Введите индекс героя для обновления: ";
+                cin >> index;
+                updateHero(heroes, index);
                 break;
+            }
             case 4: {
                 int index;
-                printStudents();
-                cout << "Введите индекс студента для обновления: ";
+                cout << "Введите индекс героя для удаления: ";
                 cin >> index;
-                updateStudent(index);
+                deleteHero(heroes, index);
                 break;
             }
-            case 5: {
-                int index;
-                printStudents();
-                cout << "Введите индекс студента для удаления: ";
-                cin >> index;
-                deleteStudent(index);
+            case 5:
+                saveToFile(heroes, filename);
                 break;
-            }
             case 6:
-                printStudents();
-                break;
-            case 0:
+                saveToFile(heroes, filename); // Автосохранение при выходе
                 return 0;
             default:
-                cout << "Неверный выбор!\n";
+                cout << "Неверный выбор!" << endl;
         }
     }
-    
+
     return 0;
 }
